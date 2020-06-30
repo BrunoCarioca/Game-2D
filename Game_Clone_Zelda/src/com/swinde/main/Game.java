@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 
 import com.swinde.entities.Entity;
 import com.swinde.entities.Player;
+import com.swinde.world.World;
 import com.swindie.graficos.Spritesheet;
 
 public class Game extends Canvas implements Runnable, KeyListener{
@@ -35,15 +36,18 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	private Player player; 
 	private List<Entity> entities;
 	/*Sprites*/
-	private Spritesheet spritesheet;
+	public static Spritesheet spritesheet;
+	/*Mapa do jogo*/
+	public static World world;
 	
 	public Game() {
 		addKeyListener(this);
 		this.setPreferredSize(new Dimension (WIDTH*SCALE, HEIGHT*SCALE));
 		montarJanela();
+		spritesheet	= new Spritesheet("/spritesheet.png");
+		world = new World("/level1.png");
 		image 		= new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		entities 	= new ArrayList<Entity>();
-		spritesheet	= new Spritesheet("/spritesheet.png");
 		/*Player*/
 		player = new Player(0, 0, 16, 16, spritesheet.getSprite(32, 0, 16, 16));
 		entities.add(player);
@@ -88,6 +92,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		Graphics g = image.getGraphics();
 		g.setColor(new Color(0,255,0));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
+		world.render(g);
 		
 		/*Renderizar cada Entidade*/
 		for (int i = 0; i < entities.size(); i++) {
