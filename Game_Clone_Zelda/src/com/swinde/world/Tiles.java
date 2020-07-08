@@ -22,7 +22,7 @@ public class Tiles {
 	}
 	
 	public void render(Graphics g){
-		g.drawImage(sprite, getX(), getY(), null);
+		g.drawImage(sprite, getX()-Camera.x, getY()-Camera.y, null);
 	}
 
 	public int getX(){

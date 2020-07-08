@@ -3,6 +3,7 @@ package com.swinde.main;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -10,20 +11,23 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JFrame;
 
+import com.swinde.entities.Enemy;
 import com.swinde.entities.Entity;
 import com.swinde.entities.Player;
 import com.swinde.world.World;
 import com.swindie.graficos.Spritesheet;
+import com.swindie.graficos.Ui;
 
 public class Game extends Canvas implements Runnable, KeyListener{
 
 	private static final long serialVersionUID = 1L;
 	/*Dimensões do mapa*/
-	private final int WIDTH  = 240; 
-	private final int HEIGHT = 160;
+	public static final int WIDTH  = 240; 
+	public static final int HEIGHT = 160;
 	private final int SCALE	 = 3;
 	/*Janela*/
 	private JFrame windown; 
@@ -31,26 +35,35 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	private Thread 	thread;
 	private boolean	isRunning;
 	/*Desenhando na tela*/
-	private BufferedImage image;
+	public static BufferedImage image;
 	/*Entidades*/
-	private Player player; 
-	private List<Entity> entities;
+	public static Player player; 
+	public static List<Entity> entities;
+	public static List<Enemy> enemys;
 	/*Sprites*/
 	public static Spritesheet spritesheet;
 	/*Mapa do jogo*/
 	public static World world;
+	/*Variavel que gera nuúmeros randomicos*/
+	public static Random rand;
+	/*Variáveis de usuário interface*/
+	public Ui ui;
 	
 	public Game() {
 		addKeyListener(this);
 		this.setPreferredSize(new Dimension (WIDTH*SCALE, HEIGHT*SCALE));
 		montarJanela();
+		rand = new Random();
+		/*Inicializando objetos*/
+		ui = new Ui();
 		spritesheet	= new Spritesheet("/spritesheet.png");
-		world = new World("/level1.png");
 		image 		= new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		entities 	= new ArrayList<Entity>();
+		enemys		= new ArrayList<Enemy>();
 		/*Player*/
 		player = new Player(0, 0, 16, 16, spritesheet.getSprite(32, 0, 16, 16));
 		entities.add(player);
+		world = new World("/level1.png");
 	}
 	
 	public static void main (String[] args){
@@ -90,7 +103,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 			return;
 		}
 		Graphics g = image.getGraphics();
-		g.setColor(new Color(0,255,0));
+		g.setColor(new Color(0,0,0));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		world.render(g);
 		
@@ -99,10 +112,14 @@ public class Game extends Canvas implements Runnable, KeyListener{
 			Entity e = entities.get(i);
 			e.render(g);
 		}
+		ui.render(g);
 		
 		g.dispose();
 		g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0, WIDTH*SCALE, HEIGHT*SCALE,null);
+		g.setFont(new Font("arial", Font.BOLD ,20));
+		g.setColor(Color.white);
+		g.drawString("Munição: "+player.ammo, 600, 25);
 		bs.show();
 	};
 	
